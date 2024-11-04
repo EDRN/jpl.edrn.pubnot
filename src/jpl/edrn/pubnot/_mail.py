@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 _from = 'sean.kelly@jpl.nasa.gov'
 
 
-def notify(to_addresses: str, smtp: str, port: int, new_pmids: set, del_pmids: set, apikey: str):
+def notify(to_addresses: str, smtp: str, port: int, user: str, pw: str, new_pmids: set, del_pmids: set, apikey: str):
     _logger.info(
         'Sending email via %s to %s about %d new pmids and %d deleted pmids', smtp, to_addresses,
         len(new_pmids), len(del_pmids)
@@ -51,5 +51,6 @@ def notify(to_addresses: str, smtp: str, port: int, new_pmids: set, del_pmids: s
     _logger.debug('Connecting to SMTP with StartTLS on %s at %d', smtp, port)
     with smtplib.SMTP(host=smtp, port=port) as server:
         server.starttls()
+        server.login(user, pw)
         server.sendmail(_from, to_addresses, email.as_string())
         server.quit()

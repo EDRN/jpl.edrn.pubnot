@@ -15,6 +15,7 @@ _pub_rdf = 'https://edrn.jpl.nasa.gov/cancerdataexpo/rdf-data/publications/@@rdf
 _email   = 'sean.kelly@jpl.nasa.gov'
 _smtp    = 'smtp.jpl.nasa.gov'
 _port    = 587
+_user    = 'datasci@jpl.nasa.gov'
 
 
 def main():
@@ -30,12 +31,16 @@ def main():
     )
     parser.add_argument('-s', '--smtp', default=_smtp, help='🖥️ SMTP server for email [%(default)s]')
     parser.add_argument('-p', '--port', default=str(_port), help='🍄‍🟫 SMTP port [%(default)s]')
+    parser.add_argument('-U', '--user', default=_user, help='👤 SMTP username [%(default)s]')
+    parser.add_argument('-P', '--password', help='🔐 SMTP password, defaults to env var SMTP_PASSWORD')
     parser.add_argument('-a', '--apikey', help='🔑 Entrez API key, defaults to env var ENTREZ_API_KEY')
+
     add_logging_argparse_options(parser)
     args = parser.parse_args()
     logging.basicConfig(level=args.loglevel)
     journal = pathlib.Path(args.journal)
     apikey = args.apikey if args.apikey else os.getenv('ENTREZ_API_KEY')
+    password = args.password if args.password else os.getenv('SMTP_PASSWORD')
     port = int(args.port)
     if not apikey:
         raise ValueError('Please specify either --apikey or set ENTREZ_API_KEY')
@@ -45,7 +50,7 @@ def main():
         _logger.info('Initial run, so no notifications will be sent')
     elif new_pmids or deleted_pmids:
         _logger.info('Notifying of %d new_pmids and/or %d deleted_pmids', len(new_pmids), len(deleted_pmids))
-        notify(args.email, args.smtp, port, new_pmids, deleted_pmids, apikey)
+        notify(args.email, args.smtp, port, args.user, password, new_pmids, deleted_pmids, apikey)
     else:
         _logger.info('No changes from last run, so no notifications')
     sys.exit(0)
