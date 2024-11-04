@@ -45,7 +45,7 @@ def notify(to_addresses: str, smtp: str, port: int, user: str, pw: str, new_pmid
     email['From'] = _from
     email['To'] = to_addresses
     email['Subject'] = 'Changes in publications from DMCC'
-    email.attach(MIMEText('\n'.join(message), 'plain'))
+    email.attach(MIMEText(message, 'plain'))
 
     # Note: this is fine for JPL SMTP which supports StartTLS
     _logger.debug('Connecting to SMTP with StartTLS on %s at %d', smtp, port)
