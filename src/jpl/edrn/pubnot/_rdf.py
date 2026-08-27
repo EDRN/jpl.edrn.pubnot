@@ -43,6 +43,7 @@ def read_pmids(uri: str) -> set:
             continue
         elif not _pmid_pattern.match(pmid):
             _logger.info('Publication with subject URI %s has a bad pmid "%s"; skipping', subject, pmid)
+            continue
         pmids.add(pmid)
     _logger.debug('Got %d pmids', len(pmids))
     return pmids
